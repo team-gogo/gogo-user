@@ -39,6 +39,7 @@ class AuthServiceImpl(
         val email = oauthService.login(dto.oauthToken).email
         authValidator.validGSMLogin(email)
         val user = userProcessor.getUserOrCreate(email)
+        authValidator.validSuspended(user)
         val tokenDto = generateToken(user)
         return authMapper.login(tokenDto, user)
     }
@@ -48,6 +49,7 @@ class AuthServiceImpl(
         val removePrefixToken = token.replace("Bearer ", "").trim()
         val refreshToken = authReader.read(removePrefixToken)
         val user = userReader.read(refreshToken.userId)
+        authValidator.validSuspended(user)
         return generateToken(user)
     }
 
