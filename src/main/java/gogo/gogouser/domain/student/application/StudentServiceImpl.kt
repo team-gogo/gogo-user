@@ -1,9 +1,11 @@
 package gogo.gogouser.domain.student.application
 
+import gogo.gogouser.domain.auth.application.AuthValidator
 import gogo.gogouser.domain.student.application.dto.StudentBundleDto
 import gogo.gogouser.domain.student.application.dto.StudentInfoUpdateDto
 import gogo.gogouser.domain.student.application.dto.StudentSearchDto
 import gogo.gogouser.domain.student.persistence.Student
+import gogo.gogouser.domain.user.application.UserReader
 import gogo.gogouser.global.util.UserUtil
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -14,11 +16,15 @@ class StudentServiceImpl(
     private val studentMapper: StudentMapper,
     private val userUtil: UserUtil,
     private val studentProcessor: StudentProcessor,
-    private val studentValidator: StudentValidator
+    private val studentValidator: StudentValidator,
+    private val userReader: UserReader,
+    private val authValidator: AuthValidator
 ) : StudentService {
 
     @Transactional(readOnly = true)
     override fun queryByUserId(userId: Long): Student {
+        val user = userReader.read(userId)
+        authValidator.validSuspended(user)
         val student = studentReader.readByUserId(userId)
         return student
     }
