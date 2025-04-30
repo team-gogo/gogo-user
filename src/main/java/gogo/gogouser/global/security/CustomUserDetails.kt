@@ -16,7 +16,7 @@ class CustomUserDetails(
 
     override fun isAccountNonExpired(): Boolean = true
 
-    override fun isAccountNonLocked(): Boolean = true
+    override fun isAccountNonLocked(): Boolean = !user.isSuspended
 
     override fun isCredentialsNonExpired(): Boolean = true
 
